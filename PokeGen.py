@@ -75,7 +75,7 @@ def __main__():
         newFile.write(s)
         print(f'{file.names[i]}\nMarket: {page.attributes['price']}\nPSA-10: {page.attributes['PSA-10']}\n')
     sum = round(sum, 2)
-    newFile.write(f'\n,,Collection Sum, PSA 10 Sum\n,,${sum},${psaSum}')
+    newFile.write(f'\n,Collection Sum, PSA 10 Sum\n,${sum},${psaSum}')
 
 if __name__ == '__main__':
     __main__()
