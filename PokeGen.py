@@ -52,6 +52,10 @@ class Page:
             attributes['price'] = price
 
             attributes['PSA-10'] = 'N/A'
+        else:
+            attributes['card'] = 'N/A'
+            attributes['price'] = 'N/A'
+            attributes['PSA-10'] = 'N/A'
 
         return attributes
 
