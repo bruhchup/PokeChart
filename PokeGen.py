@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
 from datetime import date
+import os
+from genHTML import Generate
 
 DATE = date.today()
 
@@ -63,13 +65,17 @@ def __main__():
     file = File()
     today = DATE
     date = str(today.strftime('%m.%d.%y'))
-    newFile = open(f'PokeChart_{date}.csv', 'w')
-    newFile.write('card,ungraded,PSA 10,quantity\n')
+    newPath = f'PokeChart_{date}'
+    filePath = f'PokeChart_{date}\PokeLog.csv'
+    if not os.path.exists(newPath):
+        os.makedirs(newPath)
+    newFile = open(filePath, 'w')
+    newFile.write('card,ungraded,PSA 10,quantity,links\n')
     sum = 0
     psaSum = 0
     for i in range(len(file.links)):
         page = Page(file.links[i])
-        s = f'{file.names[i]},{page.attributes['price']},{page.attributes['PSA-10']},{file.quantity[i]}\n'
+        s = f'{file.names[i]},{page.attributes['price']},{page.attributes['PSA-10']},{file.quantity[i]},{file.links[i]}\n'
         if '$' in page.attributes['price']:
             sum += float(page.attributes['price'][1:])*float(file.quantity[i])
         else:
@@ -79,7 +85,18 @@ def __main__():
         newFile.write(s)
         print(f'{file.names[i]}\nMarket: {page.attributes['price']}\nPSA-10: {page.attributes['PSA-10']}\n')
     sum = round(sum, 2)
-    newFile.write(f'\n,Collection Sum, PSA 10 Sum,\n,${sum},${psaSum},')
+    newFile.write(f'\n,Collection Sum, PSA 10 Sum,,\n,${sum},${psaSum},,')
+    newFile.close()
+    newFile = open(filePath, 'r')
+    
+    pokeHtml = Generate(newPath, filePath)
+    
+    for i in range(len(file.links)):
+        img = Generate.retrieveImg(Page(file.links[i]))
+        pokeHtml.html.write(Generate.generate(img,pokeHtml.cards[i+1]))
+    pokeHtml.html.write(f'<h1>Total Sum: ${sum}</h1>\n<h2>PSA-10 Sum: ${psaSum}</h2>\n</body>')
+        
+        
 
 if __name__ == '__main__':
     __main__()
