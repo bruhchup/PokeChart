@@ -9,7 +9,7 @@ class Generate:
         self.filePath = filePath
         csv = open(filePath, 'r')
         self.html = open(f'{folderPath}\index.html','w')
-        self.html.write(f"<!DOCTYPE html>\n<html>\n<title>HTML Tutorial</title>\n<body>\n")
+        self.html.write(f'<!DOCTYPE html>\n<head>\n<title>PokeChart</title>\n<link rel="stylesheet" type="text/css" href="../app.css">\n</head>\n<html>\n<title>HTML Tutorial</title>\n<body>\n')
         self.cards = []
         for row in csv:
             try:
@@ -34,9 +34,9 @@ class Generate:
         '''
         s = ''
         if 'pricecharting' in attributes['link']:
-            s += f'<h1>{attributes['card']}</h1>\n<br>\n<img src="{img['src']}" alt="{img['alt']}">\n<h2>Ungraded: {attributes['ungraded']}</h2>\n<h3>PSA-10: {attributes['PSA-10']}</h3><hr>\n'
+            s += f'<div class="card">\n<h1>{attributes['card']}</h1>\n<br>\n<div class="image">\n<img src="{img['src']}" alt="{img['alt']}">\n</div>\n<h2>Ungraded: {attributes['ungraded']}</h2>\n<h3>PSA-10: {attributes['PSA-10']}</h3>\n</div>\n'
         elif 'trollandtoad' in attributes['link']:
-            s += f'<h1>{attributes['card']}</h1>\n<br>\n<p>No image available</p>\n<h2>Ungraded: {attributes['ungraded']}</h2>\n<h3>PSA-10: {attributes['PSA-10']}</h3><hr>\n'
+            s += f'<div class="noCard">\n<h1>{attributes['card']}</h1>\n<br>\n<p>No image available</p>\n<h2>Ungraded: {attributes['ungraded']}</h2>\n<h3>PSA-10: {attributes['PSA-10']}</h3>\n</div>\n'
         return s
 
     def retrieveImg(page):

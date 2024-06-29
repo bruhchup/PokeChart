@@ -37,24 +37,29 @@ class Page:
                     'price': None,
                     'PSA-10': None
                     }
-        if 'pricecharting' in self.url:
-            card = page.find('h1', attrs={'class':'chart_title'}).text.strip()
-            attributes['card'] = card
+        try:
+            if 'pricecharting' in self.url:
+                card = page.find('h1', attrs={'class':'chart_title'}).text.strip()
+                attributes['card'] = card
 
-            price = page.find('span', attrs={'class':'price js-price'}).text.strip()
-            attributes['price'] = price
+                price = page.find('span', attrs={'class':'price js-price'}).text.strip()
+                attributes['price'] = price
 
-            psa10 = page.find('span', attrs={'title': 'current Manual Only value','class':'price js-price'}).text.strip()
-            attributes['PSA-10'] = psa10
-        elif 'trollandtoad' in self.url:
-            card = page.find('h1', attrs={'class':'font-weight-bold font-large font-md-largest mt-1 product-name'}).text.strip()
-            attributes['card'] = card
+                psa10 = page.find('span', attrs={'title': 'current Manual Only value','class':'price js-price'}).text.strip()
+                attributes['PSA-10'] = psa10
+            elif 'trollandtoad' in self.url:
+                card = page.find('h1', attrs={'class':'font-weight-bold font-large font-md-largest mt-1 product-name'}).text.strip()
+                attributes['card'] = card
 
-            price = page.find('span', attrs={'id':'sale-price', 'class':'d-none'}).text.strip()
-            attributes['price'] = price
+                price = page.find('span', attrs={'id':'sale-price', 'class':'d-none'}).text.strip()
+                attributes['price'] = price
 
-            attributes['PSA-10'] = 'N/A'
-        else:
+                attributes['PSA-10'] = 'N/A'
+            else:
+                attributes['card'] = 'N/A'
+                attributes['price'] = 'N/A'
+                attributes['PSA-10'] = 'N/A'
+        except:
             attributes['card'] = 'N/A'
             attributes['price'] = 'N/A'
             attributes['PSA-10'] = 'N/A'
@@ -74,16 +79,20 @@ def __main__():
     sum = 0
     psaSum = 0
     for i in range(len(file.links)):
-        page = Page(file.links[i])
-        s = f'{file.names[i]},{page.attributes['price']},{page.attributes['PSA-10']},{file.quantity[i]},{file.links[i]}\n'
-        if '$' in page.attributes['price']:
-            sum += float(page.attributes['price'][1:])*float(file.quantity[i])
-        else:
-            sum += float(page.attributes['price'])*float(file.quantity[i])
-        if '$' in page.attributes['PSA-10']:
-            psaSum += float(page.attributes['PSA-10'][1:])*float(file.quantity[i])
-        newFile.write(s)
-        print(f'{file.names[i]}\nMarket: {page.attributes['price']}\nPSA-10: {page.attributes['PSA-10']}\n')
+        try:
+            page = Page(file.links[i])
+            s = f'{file.names[i]},{page.attributes['price']},{page.attributes['PSA-10']},{file.quantity[i]},{file.links[i]}\n'
+            if '$' in page.attributes['price']:
+                sum += float(page.attributes['price'][1:])*float(file.quantity[i])
+            else:
+                sum += float(page.attributes['price'])*float(file.quantity[i])
+            if '$' in page.attributes['PSA-10']:
+                psaSum += float(page.attributes['PSA-10'][1:])*float(file.quantity[i])
+            newFile.write(s)
+            print(f'{file.names[i]}\nMarket: {page.attributes['price']}\nPSA-10: {page.attributes['PSA-10']}\n')
+        except:
+            newFile.write(f'[could not retrieve] {file.names[i]},N/A,N/A,{file.quantity[i]},{file.links[i]}\n')
+            print(f'could not retrieve {file.names[i]}')
     sum = round(sum, 2)
     psaSum = round(psaSum, 2)
     newFile.write(f'\n,Collection Sum, PSA 10 Sum,,\n,${sum},${psaSum},,')
@@ -93,8 +102,11 @@ def __main__():
     pokeHtml = Generate(newPath, filePath)
     
     for i in range(len(file.links)):
-        img = Generate.retrieveImg(Page(file.links[i]))
-        pokeHtml.html.write(Generate.generate(img,pokeHtml.cards[i+1]))
+        try:
+            img = Generate.retrieveImg(Page(file.links[i]))
+            pokeHtml.html.write(Generate.generate(img,pokeHtml.cards[i+1]))
+        except:
+            pass
     pokeHtml.html.write(f'<h1>Total Sum: ${sum}</h1>\n<h2>PSA-10 Sum: ${psaSum}</h2>\n</body>')
     
     print('Finished!')

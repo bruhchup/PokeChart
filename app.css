@@ -1,0 +1,28 @@
+.image{
+    width: 200px;
+    height: 200px;
+    text-align: center;
+    margin: auto;
+}
+
+.card:nth-child(4n+1) {
+    
+}
+
+h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+h2 {
+    padding-top: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+h3 {
+    padding-top: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
